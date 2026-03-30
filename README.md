@@ -85,5 +85,8 @@ This is the place for you to write reflections:
 ### Mandatory (Subscriber) Reflections
 
 #### Reflection Subscriber-1
+1. Dalam aplikasi Receiver, kita menggunakan RwLock karena frekuensi akses datanya tidak seimbang, di mana proses membaca daftar notifikasi jauh lebih sering dilakukan daripada proses menulis notifikasi baru. RwLock memungkinkan banyak thread untuk membaca data secara bersamaan tanpa harus mengantre, berbeda dengan Mutex yang bersifat eksklusif sehingga hanya mengizinkan satu akses saja baik untuk baca maupun tulis. Dengan menggunakan RwLock, performa aplikasi menjadi lebih optimal karena kita menghindari bottleneck saat banyak pengguna ingin melihat notifikasi di waktu yang sama.
+
+2. Rust melarang mutasi variabel statis secara bebas seperti di Java karena Rust mengutamakan prinsip Memory Safety dan Ownership untuk mencegah terjadinya data race. Di Java, mengubah isi variabel statis melalui fungsi statis bisa dilakukan dengan mudah namun berisiko menimbulkan konflik memori pada aplikasi multi-threaded. Sementara itu, Rust mewajibkan penggunaan wrapper seperti RwLock atau Mutex dalam variabel statis agar setiap perubahan data terpantau dan tersinkronisasi dengan aman oleh compiler, memastikan bahwa tidak ada dua proses yang merusak data yang sama di saat bersamaan.
 
 #### Reflection Subscriber-2
