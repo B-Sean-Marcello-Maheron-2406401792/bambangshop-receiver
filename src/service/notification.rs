@@ -16,28 +16,21 @@ pub struct NotificationService;
 impl NotificationService {
 
     pub fn subscribe(product_type: &str) -> Result<SubscriberRequest> {
-    let product_type_clone = String::from(product_type);
-    
-    // thread::spawn akan membuat thread baru
-    // .join().unwrap() akan menunggu thread tersebut selesai dan mengambil hasilnya
-    return thread::spawn(move || Self::subscribe_request(product_type_clone))
-        .join().unwrap();
+        let product_type_clone = String::from(product_type);
+        return thread::spawn(move || Self::subscribe_request(product_type_clone))
+            .join().unwrap();
     }
     
     #[tokio::main]
     pub async fn subscribe_request(product_type: String) -> Result<SubscriberRequest> {
         let product_type_upper: String = product_type.to_uppercase();
         let product_type_str: &str = product_type_upper.as_str();
-        
-        // Mengambil URL Receiver dari config (biasanya localhost:8001/notification/receive)
         let notification_receiver_url: String = format!("{}/receive", APP_CONFIG.get_instance_root_url());
         
         let payload: SubscriberRequest = SubscriberRequest {
             name: APP_CONFIG.get_instance_name().to_string(),
             url: notification_receiver_url,
         };
-
-        // Mengambil URL Publisher dari config (biasanya localhost:8000/notification/subscribe/...)
         let request_url: String = format!("{}/notification/subscribe/{}", APP_CONFIG.get_publisher_root_url(), product_type_str);
 
         let request = REQWEST_CLIENT
